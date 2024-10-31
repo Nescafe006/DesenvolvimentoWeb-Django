@@ -1,0 +1,11 @@
+<form method="post">
+{% csrf_token %}
+<label for="{{ form.nome.id_for_label }}">Nome</label>
+{{ form.nome }}
+<label for="{{ form.nome_usuario.id_for_label }}">nome_usuario</label>
+{{ form.nome_usuario }}
+<label for="{{ form.senha.id_for_label }}">senha</label>
+{{ form.senha }}
+
+<button type="submit">Cadastrar</button>
+</form>
