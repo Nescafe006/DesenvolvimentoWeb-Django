@@ -7,7 +7,7 @@ class Usuario(models.Model):
     blank=False
     )
     nome_usuario= models.CharField(
-    max_length=255,
+    max_length=254,
     null=False,
     blank=False
     )
