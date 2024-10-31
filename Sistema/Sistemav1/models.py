@@ -12,7 +12,7 @@ class Usuario(models.Model):
     blank=False
     )
     senha = models.CharField(
-    max_length=14,
+    max_length=15,
     null=False,
     blank=False
     )
