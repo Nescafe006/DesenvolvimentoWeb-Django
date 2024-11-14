@@ -24,13 +24,13 @@ def cria_usuario(request, pk):
             form = FormularioDeCriacao()
             return render(request, "form.html", {'form': form})
         
-class UsuarioListView(Listview):
+class UsuarioListView(ListView):
 
     template_name = "web/lista.html"
     model = tbl_usuarios
     context_object_name ="usuarios"
 
-    class UsuarioUpdateView(Updateview):
+    class UsuarioUpdateView(UpdateView):
         template_name = 'atualiza.html'
 
     model = tbl_usuarios
