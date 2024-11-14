@@ -1,6 +1,6 @@
 from django.db import models
 
-class tbl_usuario(models.Model):
+class tbl_usuarios(models.Model):
  usu_nome = models.CharField(max_length=40)
  usu_email = models.CharField(max_length=30)
  

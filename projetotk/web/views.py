@@ -1,14 +1,12 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic.list import ListView
-from projetotk.models import tbl_usuario
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
-
-from projetotask.models import tbl_usuario
+from projetotask.models import tbl_usuarios
 from projetotask.models import tbl_tarefas
 
 def my_view(request):
-    my_objects = tbl_usuario.objects.all()
+    my_objects = tbl_usuarios.objects.all()
     my_objects = tbl_tarefas.objects.all()
     
 
@@ -29,13 +27,13 @@ def cria_usuario(request, pk):
 class UsuarioListView(Listview):
 
     template_name = "web/lista.html"
-    model = tbl_usuario
+    model = tbl_usuarios
     context_object_name ="usuarios"
 
     class UsuarioUpdateView(Updateview):
         template_name = 'atualiza.html'
 
-    model = tbl_usuario
+    model = tbl_usuarios
     fields = fields = [
         'nome',
         'email',
@@ -51,12 +49,12 @@ class UsuarioListView(Listview):
 
 
         if id is not None:
-            usuario = tbl_usuario.objects.filter(id=id).first()
+            usuario = tbl_usuarios.objects.filter(id=id).first()
             return usuario
         
 
     class UsuarioDeleteView(DeleteView):
         template_name = "web/exclui.html"
-        model = tbl_usuario
+        model = tbl_usuarios
         context_object_name ='usuario'
         sucess_url = reverse_lazy
