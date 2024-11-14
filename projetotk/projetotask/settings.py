@@ -85,12 +85,10 @@ DATABASES = {
  'ENGINE': 'django.db.backends.mysql',
  'NAME': 'db_tarefa',
  'USER': 'root',
- 'PASSWORD': '',
+ 'PASSWORD': '12345',
  'HOST': '127.0.0.1',
  'PORT': '3306',
-        'OPTIONS': {
-            'ssl_mode': 'DISABLED'  # Desativa o SSL no MySQL
-        },
+
     }
 }
 

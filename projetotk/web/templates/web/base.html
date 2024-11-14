@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+{%load static %}
+<head>
+<title>
+    {% block tittle %}Gerenciador de tarefas{% endblock %}
+</title>
+
+<link rel="stylesheet" href="{% static 'web/css/bootstrap.min.css' %}">
+<link rel="{% static 'web/css/master.css %'}">
+{% block styles %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white"> 
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#conteudo-navbar" aria-controls="conteudo-navbar" aria-expanded="false" aria-label="Ativar navegação">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="conteudo-navbar"> <!-- Seção que será expandida/colapsada com o conteúdo da barra de navegação -->
+            <ul class="navbar-nav mr-auto"> <!-- Lista de navegação -->
+            <li class="nav-item active"> <!-- Item de navegação ativo -->
+
+                <a class="nav-link" href="{% url 'web:index' %}"> <!-- Link para a página inicial -->
+                    Página Inicial <!-- Texto do link -->
+                    </a>
+                    </li>
+                    <li class="nav-item"> <!-- Outro item de navegação -->
+                        <a class="nav-link" href="{% url 'web:lista_funcionario' %}"> <!-- Link para a página de lista de funcionários -->
+                        Funcionários <!-- Texto do link -->
+                        </a>
+                        </li>
+                        </ul>
+                        </div>
+                        </nav>
+                        {% block conteudo %}{% endblock %} <!-- Bloco de conteúdo onde o conteúdo principal da página será inserido, podendo ser sobrescrito nos templates filhos -->
+                        <script src="{% static 'web/js/jquery-3.7.1.min.js' %}"></script> <!-- Inclui o arquivo JavaScript do jQuery, que pode ser necessário para interações dinâmicas -->
+                        <script src="{% static 'web/bootstrap-5.1.3-dist/js/bootstrap.min.js' %}"></script> <!-- Inclui o arquivo JavaScript do Bootstrap (necessário para funcionalidades como o botão de alternância da navbar) -->
+                        {% block scripts %}{% endblock %} <!-- Bloco onde scripts JavaScript adicionais podem ser inseridos ou sobrescritos nos templates filhos -->
+                        <script src="{% static 'web/js/scripts.js' %}"></script> <!-- Inclui um arquivo JavaScript personalizado que provavelmente contém funções específicas do seu site -->
+
+</body>
+
+
+
+
+</html>
