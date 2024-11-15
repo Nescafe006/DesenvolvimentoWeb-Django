@@ -3,46 +3,31 @@ from web import views
 
 app_name = 'web'
 
-urlpatterns =[
-    
-    path('', views.HomeView.as_view(), name="index"),
-    
-    
-    path('usuarios/', views.HomeUsuarioView.as_view(), name="index_usuarios"),
+urlpatterns = [
+    # ----------------------------------------- Home Views ----------------------------------------
+    path('', views.home_view, name="index"),
 
-    path('usuarios/cadastrar', views.CriaUsuarioView.as_view(), name="cadastra_usuarios"),
+    # ---------------------------------------- Usuários Views -------------------------------------
+    path('usuarios/', views.home_usuario_view, name="index_usuarios"),
+    path('usuarios/cadastrar', views.cria_usuario_view, name="cadastra_usuarios"),
+    path('usuarios/lista', views.lista_usuario_view, name="lista_usuarios"),
+    path('usuarios/<int:pk>', views.atualiza_usuario_view, name="atualiza_usuarios"),
+    path('usuarios/excluir/<int:pk>', views.deleta_usuario_view, name="deleta_usuarios"),
 
-    path('usuarios/lista', views.ListaUsuarioView.as_view(), name="lista_usuarios"),
+    # ----------------------------------------- Tarefas Views ------------------------------------
+    path('tarefas/', views.home_tarefas_view, name="index_tarefas"),
+    path('tarefas/cadastrar', views.cria_tarefas_view, name="cadastra_tarefas"),
+    path('tarefas/lista', views.lista_tarefas_view, name="lista_tarefas"),
+    path('tarefas/<int:pk>', views.atualiza_tarefas_view, name="atualiza_tarefas"),
+    path('tarefas/excluir/<int:pk>', views.deleta_tarefas_view, name="deleta_tarefas"),
 
-    path('usuarios/<pk>', views.AtualizaUsuarioView.as_view(), name="atualiza_usuarios"),
-
-    path('usuarios/excluir/<pk>', views.DeletaUsuarioView.as_view(), name="deleta_usuarios"),
-#---------------------------------------------------------------------------------------------
-
-  
-    path('tarefas/', views.HomeTarefasView.as_view(), name="index_tarefas"),
-
-    path('tarefas/cadastrar', views.CriaTarefasView.as_view(), name="cadastra_tarefas"),
-
-    path('tarefas/lista', views.ListaTarefasView.as_view(), name="lista_tarefas"),
-
-    path('tarefas/<pk>', views.AtualizaTarefasView.as_view(), name="atualiza_tarefas"),
-
-    path('tarefas/excluir/<pk>', views.DeletaTarefasView.as_view(), name="deleta_tarefas"),
-    
-    #-----------------------------------------------------------------------------------------
-    
- 
-    path('gerenciar/', views.HomeGerenciarView.as_view(), name="index_gerenciar_tarefas"),
-
-    path('gerenciar/lista', views.ListaTarefaView.as_view(), name="lista_tarefa"),
-
-    path('gerenciar/<pk>', views.AtualizaTarefa.as_view(), name="atualiza_tarefa"),
-
-    path('gerenciar/excluir/<pk>', views.DeletaTarefa.as_view(), name="deleta_tarefa"),
+    # --------------------------------------- Gerenciar Tarefas Views ---------------------------
+    path('gerenciar/', views.home_gerenciar_view, name="index_gerenciar_tarefas"),
+    path('gerenciar/lista', views.lista_tarefa_view, name="lista_tarefa"),
+    path('gerenciar/<int:pk>', views.atualiza_tarefa_view, name="atualiza_tarefa"),
+    path('gerenciar/excluir/<int:pk>', views.deleta_tarefa_view, name="deleta_tarefa"),
 ]
 
-    
     
     
     

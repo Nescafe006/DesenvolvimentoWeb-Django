@@ -62,8 +62,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
-        'APP_DIRS': False,
+        'DIRS': [
+            BASE_DIR / 'templates',  # Isso é se você também tiver templates globais na raiz do projeto
+        ],
+        'APP_DIRS': True,  # Permite que o Django procure automaticamente em templates dentro dos apps
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
