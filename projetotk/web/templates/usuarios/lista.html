@@ -30,7 +30,7 @@
                                         <td class="text-center">
                                             <a href="{% url 'erp:atualiza_venda' pk=venda.id %}"
                                                class="btn btn-primary btn-sm">Atualizar</a>
-                                            <a href="{% url 'erp:deleta_venda' pk=venda.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                                            <a href="{% url 'web:deleta_venda' pk=venda.id %}" class="btn btn-danger btn-sm">Excluir</a>
                                         </td>
                                     </tr>
                                 {% endfor %}

@@ -38,7 +38,7 @@ def cria_usuario_view(request):
     else:
         form = InsereUsuarioForm()
 
-    return render(request, "templates/usuarios/cria.html", {'form': form})
+    return render(request, "usuarios/cria.html", {'form': form})
 
 # AtualizaUsuarioView
 def atualiza_usuario_view(request, pk):
