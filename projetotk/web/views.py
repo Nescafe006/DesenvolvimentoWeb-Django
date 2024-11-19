@@ -65,7 +65,7 @@ def deleta_usuario_view(request, pk):
 # ListaUsuarioView
 def lista_usuario_view(request):
     usuarios = tbl_usuarios.objects.all()
-    return render(request, "templates/usuarios/lista.html", {'usuarios': usuarios})
+    return render(request, "templates/usuarios/lista.html", {'usuarios': tbl_usuarios})
 
 # HomeTarefasView
 def home_tarefas_view(request):
