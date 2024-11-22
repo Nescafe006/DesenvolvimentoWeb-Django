@@ -1,21 +1,44 @@
-from projetotask.models import tbl_usuarios, tbl_tarefas
 from django import forms
+from projetotask.models import *
 
 class InsereUsuarioForm(forms.ModelForm):
-    class Meta:  # "Meta" com M maiúsculo
-        model = tbl_usuarios  # Associa ao modelo correto
-        fields = ['usu_nome', 'usu_email']  # Campos que o formulário deve manipular
-        labels = {
-            'usu_nome': 'Nome do Usuário',
-            'usu_email': 'E-mail',
-        }
+    class Meta:
+        model = tbl_usuarios
+        fields = [
+            'usu_nome',
+            'usu_email'
+        ]
+        exclude = []
+        
+        
 
-class InsereTarefasForm(forms.ModelForm):
-    class Meta:  # "Meta" com M maiúsculo
-        model = tbl_tarefas  # Associa ao modelo correto
-        fields = ['tar_descricao', 'tar_setor', 'tar_prioridade']  # Campos do modelo
-        labels = {
-            'tar_descricao': 'Descrição',
-            'tar_setor': 'Setor',
-            'tar_prioridade': 'Prioridade',
+class InsereTarefaForm(forms.ModelForm):
+    # Opções para o campo de prioridade
+    Opcoes = [
+        ('Baixa', 'Baixa'),
+        ('Media', 'Média'),
+        ('Alta', 'Alta'),
+    ]
+    
+
+    Op = [
+        ('Pendente', 'Pendente'),
+        ('Concluída', 'Concluída'),
+    ]
+
+    tar_prioridade = forms.ChoiceField(choices=Opcoes, widget=forms.Select(attrs={'class': 'form-control'}))
+    usuario = forms.ModelChoiceField(queryset=tbl_usuarios.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+    tar_status = forms.ChoiceField(choices=Op, widget=forms.Select(attrs={'class': 'form-control'}))
+    tar_descricao = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    tar_setor = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    tar_data = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}))
+
+    
+    class Meta:
+        model = tbl_tarefas
+        fields = ['tar_descricao', 'tar_setor', 'tar_prioridade', 'usuario', 'tar_data', 'tar_status']
+        widgets = {
+            'tar_descricao': forms.TextInput(attrs={'class': 'form-control'}),
+            'tar_setor': forms.TextInput(attrs={'class': 'form-control'}),
+            'tar_data': forms.DateTimeInput(attrs={'class': 'form-control'}),
         }

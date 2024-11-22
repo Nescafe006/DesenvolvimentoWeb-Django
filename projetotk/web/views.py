@@ -1,142 +1,134 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from projetotask.models import tbl_tarefas, tbl_usuarios
-from django.db.models import Count
-from django.urls import reverse_lazy
-from .forms import InsereUsuarioForm, InsereTarefasForm
+from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import  render
+from django.urls import reverse, reverse_lazy
+from projetotask.models import *
+from django.views.generic.edit import UpdateView
+from django.views.generic.list import ListView
+from django.views.generic.edit import DeleteView
+from django.views.generic.edit import CreateView
+from web.forms import *
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 # HomeView
-def home_view(request):
-    tarefas = tbl_tarefas.objects.all()
+def index(request):
+    return render(request, 'index.html')
 
-    tarefas_usuario = tbl_tarefas.objects.values('id').annotate(
-        numero_tarefas=Count('id'),
-    )
+def logar(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        senha = request.POST.get('senha')
 
-    total_tarefas = tbl_tarefas.objects.aggregate(total=Count("id"))
-    qtde_tarefas = tbl_tarefas.objects.count()
+        user = authenticate(request, username=username, password=senha)
+        
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect(reverse('web:index'))
+        else:
+            messages.error(request,'Usuário e/ou senha estão incorretos.')
 
-    context = {
-        'tarefas': tarefas,
-        'tarefas_usuario': tarefas_usuario,
-        'total_tarefas': total_tarefas,
-        'qtde_tarefas': qtde_tarefas
-    }
-    return render(request, "base.html", context)
+    return render(request, 'login.html')
+        
+def cadastro(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        senha = request.POST.get('senha')
 
+        user = User.objects.filter(username=username).first()
+
+        if user:
+            messages.error(request,'Usuário já existe.')
+        else:
+            user = User.objects.create_user(username=username, password=senha)
+            user.save()
+            return HttpResponseRedirect(reverse('web:logar'))
+        
+    return render(request, 'cadastro.html')
+
+
+   
 # HomeUsuarioView
-def home_usuario_view(request):
-    return render(request, "templates/usuarios/index.html")
+class UsuarioListView(LoginRequiredMixin, ListView):
+    template_name = 'lista_usuarios.html'
+    model = tbl_usuarios
+    context_object_name = 'usuarios'
 
-# CriaUsuarioView
-def cria_usuario_view(request):
+class UsuarioCreateView(LoginRequiredMixin, CreateView):
+    template_name = 'cadastra_usuario.html'
+    model = tbl_usuarios
+    form_class = InsereUsuarioForm
+    success_url = reverse_lazy('web:lista_usuarios') 
+
+class UsuarioUpdateView(LoginRequiredMixin, UpdateView):
+    template_name = 'atualiza.html'
+    model = tbl_usuarios
+    fields = ['usu_nome', 'usu_email']
+    context_object_name = 'usuarios'
+
+    def get_success_url(self):
+        return reverse_lazy('web:lista_usuarios')
+    
+    
+    def get_object(self):
+        usuario = None
+
+        id = self.kwargs.get(self.pk_url_kwarg)
+        if id is not None:
+            usuario = tbl_usuarios.objects.filter(usu_codigo=id).first()
+        return usuario
+    
+    success_url = reverse_lazy('web:lista_usuarios')
+
+class UsuarioDeleteView(LoginRequiredMixin, DeleteView):
+    template_name = 'exclui_usuario.html'
+    model = tbl_usuarios
+    context_object_name = 'usuarios'
+    success_url = reverse_lazy('web:lista_usuarios')
+
+
+class TarefaListView(LoginRequiredMixin,ListView):
+    template_name = 'lista_tarefas.html'
+    model = tbl_tarefas
+    context_object_name = 'tarefas'
+
+class TarefaCreateView(LoginRequiredMixin,CreateView):
+    template_name = 'cadastra_tarefa.html'
+    model = tbl_tarefas
+    form_class = InsereTarefaForm
+    success_url = reverse_lazy('web:lista_tarefas')
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+class TarefaDeleteView(LoginRequiredMixin, DeleteView):
+    template_name = 'exclui_tarefa.html'
+    model = tbl_tarefas
+    context_object_name = 'tarefas'  
+    success_url = reverse_lazy('web:lista_tarefas')
+
+    
+    
+def atualiza_status(request, pk):
     if request.method == 'POST':
-        form = InsereUsuarioForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse_lazy('web:lista_usuarios'))
-    else:
-        form = InsereUsuarioForm()
+        novo_status = request.POST.get('novo_status')
+      
+        if novo_status not in ['Pendente', 'Concluída']:
+            messages.error(request, 'Status inválido.')
+            return HttpResponseRedirect(reverse('web:lista_tarefas'))
 
-    return render(request, "usuarios/cria.html", {'form': form})
+        tarefa = tbl_tarefas.objects.filter(tar_codigo=pk).first()
 
-# AtualizaUsuarioView
-def atualiza_usuario_view(request, pk):
-    usuario = tbl_usuarios.objects.get(pk=pk)
-    if request.method == 'POST':
-        form = InsereUsuarioForm(request.POST, instance=usuario)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse_lazy('web:lista_usuarios'))
-    else:
-        form = InsereUsuarioForm(instance=usuario)
+        if tarefa:
+            tarefa.tar_status = novo_status  
+            tarefa.save()
+            messages.success(request, 'Status atualizado com sucesso!')
+        else:
+            messages.error(request, 'Tarefa não encontrada.')
 
-    return render(request, "templates/usuarios/atualiza.html", {'form': form, 'usuario': usuario})
+        return HttpResponseRedirect(reverse('web:lista_tarefas'))
 
-# DeletaUsuarioView
-def deleta_usuario_view(request, pk):
-    usuario = tbl_usuarios.objects.get(pk=pk)
-    if request.method == 'POST':
-        usuario.delete()
-        return redirect(reverse_lazy('web:lista_usuarios'))
-
-    return render(request, "templates/usuarios/exclui.html", {'usuario': usuario})
-
-# ListaUsuarioView
-def lista_usuario_view(request):
-    usuarios = tbl_usuarios.objects.all()
-    return render(request, "templates/usuarios/lista.html", {'usuarios': tbl_usuarios})
-
-# HomeTarefasView
-def home_tarefas_view(request):
-    return render(request, "templates/tarefas/index.html")
-
-# ListaTarefasView
-def lista_tarefas_view(request):
-    tarefas = tbl_tarefas.objects.all()
-    return render(request, "templates/tarefas/lista.html", {'tarefas': tarefas})
-
-# CriaTarefasView
-def cria_tarefas_view(request):
-    if request.method == 'POST':
-        form = InsereTarefasForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse_lazy('web:lista_tarefas'))
-    else:
-        form = InsereTarefasForm()
-
-    return render(request, "templates/tarefas/cria.html", {'form': form})
-
-# AtualizaTarefasView
-def atualiza_tarefas_view(request, pk):
-    tarefa = tbl_tarefas.objects.get(pk=pk)
-    if request.method == 'POST':
-        form = InsereTarefasForm(request.POST, instance=tarefa)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse_lazy('web:lista_tarefas'))
-    else:
-        form = InsereTarefasForm(instance=tarefa)
-
-    return render(request, "templates/tarefas/atualiza.html", {'form': form, 'tarefa': tarefa})
-
-# DeletaTarefasView
-def deleta_tarefas_view(request, pk):
-    tarefa = tbl_tarefas.objects.get(pk=pk)
-    if request.method == 'POST':
-        tarefa.delete()
-        return redirect(reverse_lazy('web:lista_tarefas'))
-
-    return render(request, "templates/tarefas/exclui.html", {'tarefa': tarefa})
-
-# HomeGerenciarView
-def home_gerenciar_view(request):
-    return render(request, "templates/gerenciar/index.html")
-
-# ListaTarefaView (gerenciamento)
-def lista_tarefa_view(request):
-    tarefas = tbl_tarefas.objects.all()
-    return render(request, "templates/gerenciar/lista.html", {'gerenciar': tarefas})
-
-# AtualizaTarefa
-def atualiza_tarefa_view(request, pk):
-    tarefa = tbl_tarefas.objects.get(pk=pk)
-    if request.method == 'POST':
-        form = InsereTarefasForm(request.POST, instance=tarefa)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse_lazy('web:lista_tarefas'))
-    else:
-        form = InsereTarefasForm(instance=tarefa)
-
-    return render(request, "templates/gerenciar/atualiza.html", {'form': form, 'gerenciar': tarefa})
-
-# DeletaTarefa
-def deleta_tarefa_view(request, pk):
-    tarefa = tbl_tarefas.objects.get(pk=pk)
-    if request.method == 'POST':
-        tarefa.delete()
-        return redirect(reverse_lazy('web:lista_tarefas'))
-
-    return render(request, "templates/gerenciar/exclui.html", {'gerenciar': tarefa})

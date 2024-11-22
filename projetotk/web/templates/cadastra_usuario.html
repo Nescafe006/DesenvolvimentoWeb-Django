@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %}Cadastro de Usuários{% endblock %}
+
+{% block conteudo %}
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-lg-6 col-md-8 col-sm-12 col-xs-12"> <!-- Ajuste largura -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Cadastro de Usuários</h5>
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Exibindo o campo nome -->
+                        <div class="mb-3">
+                            <label for="{{ form.usu_nome.id_for_label }}" class="form-label">Nome:</label>
+                            {% render_field form.usu_nome class="form-control" %}
+                        </div>
+
+                        <!-- Exibindo o campo email -->
+                        <div class="mb-3">
+                            <label for="{{ form.usu_email.id_for_label }}" class="form-label">Email:</label>
+                            {% render_field form.usu_email class="form-control" %}
+                        </div>
+
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'web:index' %}" class="btn btn-outline-primary">Voltar</a>
+                            <button class="btn btn-primary" type="submit">Enviar</button>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

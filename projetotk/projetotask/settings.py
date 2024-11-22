@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'projetotask.wsgi.application'
 DATABASES = {
  'default': {
  'ENGINE': 'django.db.backends.mysql',
- 'NAME': 'db_tarefa',
+ 'NAME': 'db_tarefas',
  'USER': 'root',
  'PASSWORD': '12345',
  'HOST': '127.0.0.1',
